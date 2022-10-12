@@ -100,6 +100,16 @@
     // }
   }
 
+  function proxy(vm, source, key) {
+    Object.defineProperty(vm, key, {
+      get: function get() {
+        return vm[source][key];
+      },
+      set: function set(newValue) {
+        vm[source][key] = newValue;
+      }
+    });
+  }
   function initData(vm) {
     //
     var data = vm.$options.data; // vm.$el  vue 内部会对属性检测如果是以$开头 不会进行代理
@@ -107,6 +117,12 @@
     // 这个时候 vm 和 data没有任何关系, 通过_data 进行关联
     data = vm._data = isFunction(data) ? data.call(vm) : data; //data可能是函数或者对象
     console.log("data", data);
+
+    // 用户去vm.xxx => vm._data.xxx
+    for (var key in data) {
+      // vm.name = 'xxx'  vm._data.name = 'xxx'
+      proxy(vm, '_data', key);
+    }
     observe(data);
   }
 
