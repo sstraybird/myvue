@@ -14,6 +14,7 @@ class Observer {
 
 // vue2 会对对象进行遍历 将每个属性 用defineProperty 重新定义 性能差
 function defineReactive(data,key,value){ // value有可能是对象
+    observe(value); // 本身用户默认值是对象套对象 需要递归处理 （性能差）
     Object.defineProperty(data,key,{
         get(){
             return value
