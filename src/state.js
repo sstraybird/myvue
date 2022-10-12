@@ -1,4 +1,5 @@
 import {isFunction} from "./utils";
+import { observe } from "./observer/index"; // node_resolve_plugin
 
 export function initState(vm) { // 状态的初始化
     const opts = vm.$options;
@@ -20,4 +21,5 @@ function initData(vm) { //
     data = vm._data = isFunction(data) ? data.call(vm) : data;//data可能是函数或者对象
     console.log("data",data)
 
+    observe(data);
 }
