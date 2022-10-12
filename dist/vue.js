@@ -13,6 +13,28 @@
       return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
     }, _typeof(obj);
   }
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+  function _defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+  function _createClass(Constructor, protoProps, staticProps) {
+    if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) _defineProperties(Constructor, staticProps);
+    Object.defineProperty(Constructor, "prototype", {
+      writable: false
+    });
+    return Constructor;
+  }
 
   function isFunction(val) {
     return typeof val === 'function';
@@ -21,6 +43,35 @@
     return _typeof(val) == 'object' && val !== null;
   }
 
+  // 检测数据变化 类有类型 ， 对象无类型
+  var Observer = /*#__PURE__*/function () {
+    function Observer(data) {
+      _classCallCheck(this, Observer);
+      // 对对象中的所有属性 进行劫持
+      this.walk(data); //对象劫持的逻辑
+    }
+    _createClass(Observer, [{
+      key: "walk",
+      value: function walk(data) {
+        // 对象
+        Object.keys(data).forEach(function (key) {
+          defineReactive(data, key, data[key]);
+        });
+      }
+    }]);
+    return Observer;
+  }(); // vue2 会对对象进行遍历 将每个属性 用defineProperty 重新定义 性能差
+  function defineReactive(data, key, value) {
+    // value有可能是对象
+    Object.defineProperty(data, key, {
+      get: function get() {
+        return value;
+      },
+      set: function set(newV) {
+        value = newV;
+      }
+    });
+  }
   function observe(data) {
     // 如果是对象才观测
     if (!isObject(data)) {
@@ -28,6 +79,8 @@
     }
     // 默认最外层的data必须是一个对象
     console.log("observeData", data);
+    // 默认最外层的data必须是一个对象
+    return new Observer(data);
   }
 
   function initState(vm) {
@@ -49,6 +102,7 @@
     //
     var data = vm.$options.data; // vm.$el  vue 内部会对属性检测如果是以$开头 不会进行代理
     // vue2中会将data中的所有数据 进行数据劫持 Object.defineProperty
+    // 这个时候 vm 和 data没有任何关系, 通过_data 进行关联
     data = vm._data = isFunction(data) ? data.call(vm) : data; //data可能是函数或者对象
     console.log("data", data);
     observe(data);
