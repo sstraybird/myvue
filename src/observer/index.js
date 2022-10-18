@@ -1,10 +1,18 @@
 import {isObject} from "../utils";
 import {arrayMethods} from "./array";
 
+// 1.如果数据是对象 会将对象不停的递归 进行劫持
+// 2.如果是数组，会劫持数组的方法，并对数组中不是基本数据类型的进行检测
+
 // 检测数据变化 类有类型 ， 对象无类型
 class Observer {
     constructor(data) { // 对对象中的所有属性 进行劫持
         console.log('data111',data)
+        Object.defineProperty(data,'__ob__',{
+            value:this,
+            enumerable:false // 不可枚举的   防止walk循环到此属性从而出现死循环
+        })
+        // data.__ob__ = this; // 所有被劫持过的属性都有__ob__
         if(Array.isArray(data)) {
             // 数组劫持的逻辑
             // 对数组原来的方法进行改写， 切片编程  高阶函数
@@ -44,6 +52,9 @@ function defineReactive(data,key,value){ // value有可能是对象
 export function observe(data) {
     // 如果是对象才观测
     if (!isObject(data)) {
+        return;
+    }
+    if(data.__ob__){    //如果data已经被观测过就不用再观测了
         return;
     }
     // 默认最外层的data必须是一个对象
