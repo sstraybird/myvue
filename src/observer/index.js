@@ -1,9 +1,17 @@
 import {isObject} from "../utils";
+import {arrayMethods} from "./array";
 
 // 检测数据变化 类有类型 ， 对象无类型
 class Observer {
     constructor(data) { // 对对象中的所有属性 进行劫持
-        this.walk(data); //对象劫持的逻辑
+        console.log('data111',data)
+        if(Array.isArray(data)) {
+            // 数组劫持的逻辑
+            // 对数组原来的方法进行改写， 切片编程  高阶函数
+            data.__proto__ = arrayMethods;
+        }else {
+            this.walk(data); //对象劫持的逻辑
+        }
     }
     walk(data) { // 对象
         Object.keys(data).forEach(key => {
