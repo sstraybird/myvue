@@ -9,9 +9,15 @@ class Observer {
             // 数组劫持的逻辑
             // 对数组原来的方法进行改写， 切片编程  高阶函数
             data.__proto__ = arrayMethods;
+            // 如果数组中的数据是对象类型，需要监控对象的变化
+            this.observeArray(data);
         }else {
             this.walk(data); //对象劫持的逻辑
         }
+    }
+    observeArray(data){ // 对我们数组的数组 和 数组中的对象再次劫持 递归了
+        // [{a:1},{b:2}]
+        data.forEach(item=>observe(item))
     }
     walk(data) { // 对象
         Object.keys(data).forEach(key => {
@@ -25,6 +31,7 @@ function defineReactive(data,key,value){ // value有可能是对象
     observe(value); // 本身用户默认值是对象套对象 需要递归处理 （性能差）
     Object.defineProperty(data,key,{
         get(){
+            console.log('get',data,key)
             return value
         },
         set(newV){

@@ -21,20 +21,23 @@
             data() {
                 //this = vm
                 return {
-                   name:[11,12,13]
+                   name:[{age:18},{age:19}]
                 }
             }
         });
-        vm._data.a = {c:1}
+        // vm._data.a = {c:1}
         console.log("vm",vm)
         console.log("vm.$options",vm.$options)        //代表用户里面的所有选项
         // vm.name == vm._data.name
         console.log(vm.name)
+        // 数组没有监控 索引的变化 , 但是索引对应的内容是对象类型，需要被监控 （Object.freeze用户优化性能)
 
         // 用户很少通过索引操作数组 arr[82] = 1000 内部就想到不对索引进行拦截，因为消耗严重，内部数组不采用defineProperty
 
         // push shift pop unshift reverse sort splice   7个方法都是变异方法，就是会更改原数组
-        vm.name.push('123')
+        // vm.name.push('123')
+
+        vm.name[0].age
     </script>
 </body>
 
