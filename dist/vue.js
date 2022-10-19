@@ -43,14 +43,74 @@
     return _typeof(val) == 'object' && val !== null;
   }
 
+  var oldArrayPrototype = Array.prototype;
+  var arrayMethods = Object.create(oldArrayPrototype);
+  // arrayMethods.__proto__ = Array.prototype 继承
+
+  var methods = ['push', 'shift', 'unshift', 'pop', 'reverse', 'sort', 'splice'];
+  methods.forEach(function (method) {
+    // 用户调用的如果是以上七个方法 会用我自己重写的，否则用原来的数组方法
+    arrayMethods[method] = function () {
+      var _oldArrayPrototype$me;
+      //  args 是参数列表 arr.push(1,2,3)
+      console.log('数组发生变化');
+      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+      (_oldArrayPrototype$me = oldArrayPrototype[method]).call.apply(_oldArrayPrototype$me, [this].concat(args)); // arr.push(1,2,3);
+      var inserted;
+      var ob = this.__ob__; // 根据当前数组获取到observer实例
+      switch (method) {
+        case 'push':
+        case 'unshift':
+          inserted = args; // 就是新增的内容
+          break;
+        case 'splice':
+          inserted = args.slice(2);
+      }
+      // 如果有新增的内容要进行继续劫持, 我需要观测的数组里的每一项，而不是数组
+      // 更新操作.... todo...
+      if (inserted) ob.observeArray(inserted);
+
+      // arr.push(1,2)
+      // arr.splice(0,1,xxxx)
+    };
+  });
+
+  // 1.如果数据是对象 会将对象不停的递归 进行劫持
+  // 2.如果是数组，会劫持数组的方法，并对数组中不是基本数据类型的进行检测
+
   // 检测数据变化 类有类型 ， 对象无类型
   var Observer = /*#__PURE__*/function () {
     function Observer(data) {
       _classCallCheck(this, Observer);
       // 对对象中的所有属性 进行劫持
-      this.walk(data); //对象劫持的逻辑
+      console.log('data111', data);
+      Object.defineProperty(data, '__ob__', {
+        value: this,
+        enumerable: false // 不可枚举的   防止walk循环到此属性从而出现死循环
+      });
+      // data.__ob__ = this; // 所有被劫持过的属性都有__ob__
+      if (Array.isArray(data)) {
+        // 数组劫持的逻辑
+        // 对数组原来的方法进行改写， 切片编程  高阶函数
+        data.__proto__ = arrayMethods;
+        // 如果数组中的数据是对象类型，需要监控对象的变化
+        this.observeArray(data);
+      } else {
+        this.walk(data); //对象劫持的逻辑
+      }
     }
     _createClass(Observer, [{
+      key: "observeArray",
+      value: function observeArray(data) {
+        // 对我们数组的数组 和 数组中的对象再次劫持 递归了
+        // [{a:1},{b:2}]
+        data.forEach(function (item) {
+          return observe(item);
+        });
+      }
+    }, {
       key: "walk",
       value: function walk(data) {
         // 对象
@@ -66,6 +126,7 @@
     observe(value); // 本身用户默认值是对象套对象 需要递归处理 （性能差）
     Object.defineProperty(data, key, {
       get: function get() {
+        console.log('get', data, key);
         return value;
       },
       set: function set(newV) {
@@ -77,6 +138,10 @@
   function observe(data) {
     // 如果是对象才观测
     if (!isObject(data)) {
+      return;
+    }
+    if (data.__ob__) {
+      //如果data已经被观测过就不用再观测了
       return;
     }
     // 默认最外层的data必须是一个对象
@@ -126,6 +191,17 @@
     observe(data);
   }
 
+  var ncname = "[a-zA-Z_][\\-\\.0-9_a-zA-Z]*"; // a-1123_asd div 标签名    * 0个或多个
+  var qnameCapture = "((?:".concat(ncname, "\\:)?").concat(ncname, ")"); //  使用正则的分组，标签名的捕获，用来获取的标签名的 match后的索引为1的
+
+  // html字符串解析成 对应的脚本来触发 tokens  <div id="app"> {{name}}</div>
+
+  function compileToFunction(template) {
+    console.log('compileToFunction template', template);
+    var r = '<xxxx></xxxx>'.match(new RegExp(qnameCapture));
+    console.log(r);
+  }
+
   //插件一般都是一个函数，需要调用一下才能用
   function initMixin(Vue) {
     //这里的Vue是VUe构造函数
@@ -136,6 +212,31 @@
 
       // 对数据进行初始化 watch computed props data ...
       initState(vm); // vm.$options.data  数据劫持
+
+      if (vm.$options.el) {
+        // 将数据挂载到这个模板上
+        vm.$mount(vm.$options.el);
+      }
+    };
+    Vue.prototype.$mount = function (el) {
+      var vm = this;
+      var options = vm.$options;
+      el = document.querySelector(el);
+      console.log('el', el);
+      vm.$el = el;
+      // 把模板转化成 对应的渲染函数 =》 虚拟dom概念 vnode =》 diff算法 更新虚拟dom =》 产生真实节点，更新
+      if (!options.render) {
+        // 没有render用template，目前没render
+        var template = options.template;
+        if (!template && el) {
+          // 用户也没有传递template 就取el的内容作为模板
+          template = el.outerHTML;
+          console.log('template', template);
+          var render = compileToFunction(template);
+          options.render = render;
+        }
+      }
+      // options.render 就是渲染函数
     };
   }
 
