@@ -11,7 +11,12 @@ const attribute = /^\s*([^\s"'<>\/=]+)(?:\s*(=)\s*(?:"([^"]*)"+|'([^']*)'+|([^\s
 const startTagClose = /^\s*(\/?)>/; //     />   <div/>
 const defaultTagRE = /\{\{((?:.|\r?\n)+?)\}\}/g; // {{aaaaa}}
 
-
+function start(tagName, attributes) {
+    console.log('start',tagName,attributes)
+}
+function chars(text) {
+    console.log('text',text)
+}
 function parserHTML(html) {
     function advance(len) {
         html = html.substring(len);
@@ -49,6 +54,18 @@ function parserHTML(html) {
         console.log('textEnd',textEnd)
         if (textEnd == 0) {
             const startTagMatch = parseStartTag(html); // 解析开始标签
+            if (startTagMatch) {
+                start(startTagMatch.tagName, startTagMatch.attrs)
+                continue;
+            }
+        }
+        let text; // //  </div>
+        if (textEnd > 0) {
+            text = html.substring(0, textEnd)
+        }
+        if (text) {
+            chars(text);
+            advance(text.length);
             break
         }
     }
