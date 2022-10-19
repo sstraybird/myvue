@@ -35,6 +35,11 @@ function parserHTML(html) {
                 match.attrs.push({ name: attr[1], value: attr[3] || attr[4] || attr[5] })
                 advance(attr[0].length)
             }
+            console.log('end',end)
+            if (end) {
+                advance(end[0].length);
+            }
+            return match;
         }
         return false
     }
