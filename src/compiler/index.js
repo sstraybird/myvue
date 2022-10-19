@@ -12,11 +12,41 @@ const startTagClose = /^\s*(\/?)>/; //     />   <div/>
 const defaultTagRE = /\{\{((?:.|\r?\n)+?)\}\}/g; // {{aaaaa}}
 
 
-// html字符串解析成 对应的脚本来触发 tokens  <div id="app"> {{name}}</div>
+function parserHTML(html) {
+    function advance(len) {
+        html = html.substring(len);
+    }
+    function parseStartTag() {
+        const start = html.match(startTagOpen);
+        console.log('start',start)
+        if (start) {
+            const match = {
+                tagName: start[1],
+                attrs: []
+            }
+            advance(start[0].length);
+            console.log('html',html)
+        }
+        return false
+    }
 
+    while (html) { // 看要解析的内容是否存在，如果存在就不停的解析
+        let textEnd = html.indexOf('<'); // 当前解析的开头
+        console.log('textEnd',textEnd)
+        if (textEnd == 0) {
+            const startTagMatch = parseStartTag(html); // 解析开始标签
+            break
+        }
+    }
+}
+// html字符串解析成 对应的脚本来触发 tokens  <div id="app"> {{name}}</div>
 
 export function compileToFunction(template) {
     console.log('compileToFunction template',template)
     let r = '<xxxx></xxxx>'.match(new RegExp(qnameCapture))
     console.log(r)
+
+    //开源库htmlparser2可以完成此功能
+    let root = parserHTML(template)
+
 }

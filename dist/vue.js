@@ -193,13 +193,47 @@
 
   var ncname = "[a-zA-Z_][\\-\\.0-9_a-zA-Z]*"; // a-1123_asd div 标签名    * 0个或多个
   var qnameCapture = "((?:".concat(ncname, "\\:)?").concat(ncname, ")"); //  使用正则的分组，标签名的捕获，用来获取的标签名的 match后的索引为1的
+  // ？表示可有可无 aa:xxx 命名空间：标签名 <aa:xxx></aa:xxx> ?:只匹配不捕获
+  // 捕获到的被包进小括号里
 
+  var startTagOpen = new RegExp("^<".concat(qnameCapture)); // 匹配开始标签的    <xxx
+
+  function parserHTML(html) {
+    function advance(len) {
+      html = html.substring(len);
+    }
+    function parseStartTag() {
+      var start = html.match(startTagOpen);
+      console.log('start', start);
+      if (start) {
+        var match = {
+          tagName: start[1],
+          attrs: []
+        };
+        advance(start[0].length);
+        console.log('html', html);
+      }
+      return false;
+    }
+    while (html) {
+      // 看要解析的内容是否存在，如果存在就不停的解析
+      var textEnd = html.indexOf('<'); // 当前解析的开头
+      console.log('textEnd', textEnd);
+      if (textEnd == 0) {
+        var startTagMatch = parseStartTag(); // 解析开始标签
+        break;
+      }
+    }
+  }
   // html字符串解析成 对应的脚本来触发 tokens  <div id="app"> {{name}}</div>
 
   function compileToFunction(template) {
     console.log('compileToFunction template', template);
     var r = '<xxxx></xxxx>'.match(new RegExp(qnameCapture));
     console.log(r);
+
+    //开源库htmlparser2可以完成此功能
+    var root = parserHTML(template);
   }
 
   //插件一般都是一个函数，需要调用一下才能用
