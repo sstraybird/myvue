@@ -14,6 +14,11 @@ const defaultTagRE = /\{\{((?:.|\r?\n)+?)\}\}/g; // {{aaaaa}}
 function start(tagName, attributes) {
     console.log('start',tagName,attributes)
 }
+
+function end(tagName) {
+    console.log('end tagName',tagName)
+}
+
 function chars(text) {
     console.log('text',text)
 }
@@ -58,6 +63,12 @@ function parserHTML(html) {
                 start(startTagMatch.tagName, startTagMatch.attrs)
                 continue;
             }
+            const endTagMatch = html.match(endTag);
+            if (endTagMatch) {
+                end(endTagMatch[1]);
+                advance(endTagMatch[0].length);
+                continue;
+            }
         }
         let text; // //  </div>
         if (textEnd > 0) {
@@ -66,7 +77,6 @@ function parserHTML(html) {
         if (text) {
             chars(text);
             advance(text.length);
-            break
         }
     }
 }
