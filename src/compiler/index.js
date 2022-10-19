@@ -11,16 +11,52 @@ const attribute = /^\s*([^\s"'<>\/=]+)(?:\s*(=)\s*(?:"([^"]*)"+|'([^']*)'+|([^\s
 const startTagClose = /^\s*(\/?)>/; //     />   <div/>
 const defaultTagRE = /\{\{((?:.|\r?\n)+?)\}\}/g; // {{aaaaa}}
 
+// ast (语法层面的描述 js css html) vdom （dom节点）
+// html字符串解析成 对应的脚本来触发 tokens  <div id="app"> {{name}}</div>
+// 将解析后的结果 组装成一个树结构  栈
+function createAstElement(tagName, attrs) {
+    return {
+        tag: tagName,
+        type: 1,        //元素是1，文本是3
+        children: [],
+        parent: null,
+        attrs
+    }
+}
+let root = null;
+let stack = [];
 function start(tagName, attributes) {
     console.log('start',tagName,attributes)
+    let parent = stack[stack.length - 1];
+    let element = createAstElement(tagName, attributes);
+    if (!root) {
+        root = element;
+    }
+    if(parent){
+        element.parent = parent;// 当放入栈中时 继续父亲是谁
+        parent.children.push(element)
+    }
+    stack.push(element);
 }
 
 function end(tagName) {
     console.log('end tagName',tagName)
+    let last = stack.pop();
+    if (last.tag !== tagName) {
+        throw new Error('标签有误');
+    }
 }
 
 function chars(text) {
     console.log('text',text)
+    text = text.replace(/\s/g, "");
+    let parent = stack[stack.length - 1];
+    if (text) {
+        parent.children.push({
+            type: 3,
+            text
+        })
+    }
 }
 function parserHTML(html) {
     function advance(len) {
@@ -80,7 +116,7 @@ function parserHTML(html) {
         }
     }
 }
-// html字符串解析成 对应的脚本来触发 tokens  <div id="app"> {{name}}</div>
+
 
 export function compileToFunction(template) {
     console.log('compileToFunction template',template)
@@ -88,6 +124,6 @@ export function compileToFunction(template) {
     console.log(r)
 
     //开源库htmlparser2可以完成此功能
-    let root = parserHTML(template)
-
+    parserHTML(template)
+    console.log('root',root)
 }
