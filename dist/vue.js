@@ -197,6 +197,9 @@
   // 捕获到的被包进小括号里
 
   var startTagOpen = new RegExp("^<".concat(qnameCapture)); // 匹配开始标签的    <xxx
+  //           aa  =   "  xxx "  | '  xxxx '  | xxx
+  var attribute = /^\s*([^\s"'<>\/=]+)(?:\s*(=)\s*(?:"([^"]*)"+|'([^']*)'+|([^\s"'=<>`]+)))?/; // a=b  a="b"  a='b'
+  var startTagClose = /^\s*(\/?)>/; //     />   <div/>
 
   function parserHTML(html) {
     function advance(len) {
@@ -212,6 +215,17 @@
         };
         advance(start[0].length);
         console.log('html', html);
+        var end;
+        // 如果没有遇到标签结尾就不停的解析
+        var attr;
+        while (!(end = html.match(startTagClose)) && (attr = html.match(attribute))) {
+          console.log('attr', attr);
+          match.attrs.push({
+            name: attr[1],
+            value: attr[3] || attr[4] || attr[5]
+          });
+          advance(attr[0].length);
+        }
       }
       return false;
     }
