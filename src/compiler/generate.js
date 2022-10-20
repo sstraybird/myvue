@@ -1,3 +1,4 @@
+const defaultTagRE = /\{\{((?:.|\r?\n)+?)\}\}/g; // {{aaaaa}}
 
 // html字符串 =》 字符串  _c('div',{id:'app',a:1},'hello')
 
@@ -23,7 +24,26 @@ function gen(el) {
         return generate(el);
     } else {
         let text = el.text;
-        return `_v('${text}')`;
+        if (!defaultTagRE.test(text)) {
+            return `_v('${text}')`;
+        } else {
+            // 'hello' + arr + 'world'    hello {{arr}} {{aa}} world
+            let tokens = [];
+            let match;
+            let lastIndex = defaultTagRE.lastIndex = 0; // CSS-LOADER 原理一样
+            while (match = defaultTagRE.exec(text)) { // 看有没有匹配到
+                let index = match.index; // 开始索引
+                if (index > lastIndex) {
+                    tokens.push(JSON.stringify(text.slice(lastIndex, index)))
+                }
+                tokens.push(`_s(${match[1].trim()})`); // JSON.stringify()
+                lastIndex = index + match[0].length;
+            }
+            if (lastIndex < text.length) {
+                tokens.push(JSON.stringify(text.slice(lastIndex)))
+            }
+            return `_v(${tokens.join('+')})`
+        }
     }
 }
 

@@ -8,9 +8,9 @@
 </head>
 
 <body>
+<!-- 'hello' + arr + 'world' -->
 <div id="app" a=1 style="color: red;background: blue">
-    <span>world</span>
-    hello
+    hello {{arr}} world
 </div>
 
     <script src="dist/vue.js"></script>
@@ -24,7 +24,7 @@
             data() {
                 //this = vm
                 return {
-                   name:[{age:18},{age:19}]
+                   arr:[{name:'zhg'},{name:'zxx'}]
                 }
             }
         });
@@ -41,7 +41,7 @@
         // vm.name.push('123')
 
         // vm.name[0].age
-        vm.name.push({age:20})
+        vm.arr.push({name:'zsf'})
     </script>
 </body>
 
