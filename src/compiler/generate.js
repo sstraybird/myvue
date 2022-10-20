@@ -5,6 +5,14 @@ function genProps(attrs) { // [{name:'xxx',value:'xxx'},{name:'xxx',value:'xxx'}
     let str = '';
     for (let i = 0; i < attrs.length; i++) {
         let attr = attrs[i];
+        if (attr.name === 'style') { // color:red;background:blue
+            let styleObj = {};
+            attr.value.replace(/([^;:]+)\:([^;:]+)/g, function() {
+                console.log('arguments',arguments)
+                styleObj[arguments[1]] = arguments[2]
+            })
+            attr.value = styleObj
+        }
         str += `${attr.name}:${JSON.stringify(attr.value)},`;
     }
     return `{${str.slice(0,-1)}}`
