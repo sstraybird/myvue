@@ -1,7 +1,12 @@
+import {patch} from "./vdom/patch";
 
 export function lifecycleMixin(Vue) {
     Vue.prototype._update = function(vnode) {
         console.log('_update',vnode)
+        // 既有初始化 又有更新
+        const vm = this;
+
+        patch(vm.$el, vnode);       //比较前后虚拟节点的差异,将虚拟节点创建成真实节点之后 替换掉div
     }
 }
 
