@@ -10,7 +10,7 @@ export function lifecycleMixin(Vue) {
         vm.$el = patch(vm.$el, vnode);       //比较前后虚拟节点的差异,将虚拟节点创建成真实节点之后 替换掉div
     }
 }
-
+// 后续每个组件渲染的时候都会有一个watcher
 export function mountComponent(vm,el) {
     console.log(vm,el)
     // 更新函数 数据变化后 会再次调用此函数

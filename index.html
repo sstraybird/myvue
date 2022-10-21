@@ -10,7 +10,7 @@
 <body>
 <!-- 'hello' + arr + 'world' -->
 <div id="app" a=1 style="color: red;background: blue">
-    hello ({{name}}) world
+    hello ({{name}}) {{age}} world
 </div>
 
     <script src="dist/vue.js"></script>
@@ -24,7 +24,8 @@
             data() {
                 //this = vm
                 return {
-                   name:'zhg'
+                   name:'zhg',
+                    age:19
                 }
             }
         });
@@ -43,10 +44,10 @@
         // vm.name[0].age
         // vm.arr.push({name:'zsf'})
 
-        setTimeout(()=>{
-            vm.name = 'hello'
-            vm._update(vm._render())         // 重新调用render方法产生虚拟dom， 目前还没有diff
-        },1000)
+        // setTimeout(()=>{
+        //     vm.name = 'hello'
+        //     vm._update(vm._render())         // 重新调用render方法产生虚拟dom， 目前还没有diff
+        // },1000)
     </script>
 </body>
 
