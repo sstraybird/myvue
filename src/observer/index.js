@@ -50,8 +50,13 @@ function defineReactive(data,key,value){ // value有可能是对象
             return value
         },
         set(newV){
-            observe(newV); // 如果用户赋值一个新对象 ，需要将这个对象进行劫持
-            value = newV;
+            // todo... 更新视图
+
+            if(newV !== value) {
+                observe(newV); // 如果用户赋值一个新对象 ，需要将这个对象进行劫持
+                value = newV;
+                dep.notify(); // 告诉当前的属性存放的watcher执行
+            }
         }
     })
 }
