@@ -2,6 +2,7 @@
 
 import {initState} from "./state";
 import {compileToFunction} from "./compiler/index";
+import {mountComponent} from "./lifecycle";
 
 export function initMixin(Vue) {        //这里的Vue是VUe构造函数
     Vue.prototype._init = function(options) {
@@ -35,5 +36,8 @@ export function initMixin(Vue) {        //这里的Vue是VUe构造函数
             }
         }
         // options.render 就是渲染函数
+        console.log('init render function',options.render)
+        // 调用render方法 渲染成真实dom 替换掉页面的内容
+        mountComponent(vm,el); // 组件的挂载流程
     }
 }

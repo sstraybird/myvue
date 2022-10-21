@@ -1,4 +1,6 @@
 import { initMixin } from "./init";
+import {renderMixin} from "./render";
+import {lifecycleMixin} from "./lifecycle";
 
 function Vue(options) {     //构造函数模拟类，类中写prototype比较怪，用function符合习惯
     // options 为用户传入的选项
@@ -9,5 +11,6 @@ function Vue(options) {     //构造函数模拟类，类中写prototype比较�
 //拆分，把不同的功能拆分到不同的文件中，通过注入的方式来使用
 // 扩展原型的，
 initMixin(Vue);     //在原型上添加_init方法， 组件也需要初始化，组件也应该有个_init方法,所以把_init变成公共方法
-
+renderMixin(Vue); // _render
+lifecycleMixin(Vue); // _update
 export default Vue    //导出的会放到window下
