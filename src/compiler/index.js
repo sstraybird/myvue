@@ -10,6 +10,12 @@ export function compileToFunction(template) {
     let code = generate(root)
 
     console.log('code',code)
+
+    let render = new Function(`with(this){return ${code}}`); // code 中会用到数据 数据在vm上
+    console.log('function:',render.toString())
+
+    // render.call(vm)
+    return render;
     // render(){
     //     return _c('div',{id:'app',a:1},'hello')
     // }
@@ -17,3 +23,9 @@ export function compileToFunction(template) {
 
     //虚拟dom {tag:div,data:{id:'app',a:1,...},children:[{text:'hello'}]}
 }
+
+
+// let vm = {arr:1}
+// with(vm){
+//     console.log(arr)
+// }
