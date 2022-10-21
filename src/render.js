@@ -1,12 +1,18 @@
+import {createElement,createTextElement} from "./vdom/index";
+
 export function renderMixin(Vue){
     Vue.prototype._c = function(){ // createElement
-        return console.log('_c arguments:',...arguments)
+        console.log('_c arguments:',...arguments)
+        return createElement(this,...arguments)
     }
     Vue.prototype._v = function (text) { // createTextElement
         console.log('_v text:',text)
+        return createTextElement(this,text)
     }
     Vue.prototype._s = function(val){ // stringify
         console.log('_s val:',val)
+        if(typeof val == 'object') return JSON.stringify(val)
+        return val;
     }
     Vue.prototype._render = function(){
         console.log('_render')

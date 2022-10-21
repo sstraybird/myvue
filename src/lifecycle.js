@@ -1,7 +1,7 @@
 
 export function lifecycleMixin(Vue) {
     Vue.prototype._update = function(vnode) {
-        console.log('_update')
+        console.log('_update',vnode)
     }
 }
 
