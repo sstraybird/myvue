@@ -10,7 +10,7 @@
 <body>
 <!-- 'hello' + arr + 'world' -->
 <div id="app" a=1 style="color: red;background: blue">
-    hello ({{name}}) {{age}} world
+    hello {{arr}} world
 </div>
 
     <script src="dist/vue.js"></script>
@@ -24,16 +24,16 @@
             data() {
                 //this = vm
                 return {
-                   name:'zhg',
+                   arr:[1,2,3],
                     age:19
                 }
             }
         });
         // vm._data.a = {c:1}
-        console.log("vm",vm)
-        console.log("vm.$options",vm.$options)        //代表用户里面的所有选项
-        // vm.name == vm._data.name
-        console.log(vm.name)
+        // console.log("vm",vm)
+        // console.log("vm.$options",vm.$options)        //代表用户里面的所有选项
+        // // vm.name == vm._data.name
+        // console.log(vm.name)
         // 数组没有监控 索引的变化 , 但是索引对应的内容是对象类型，需要被监控 （Object.freeze用户优化性能)
 
         // 用户很少通过索引操作数组 arr[82] = 1000 内部就想到不对索引进行拦截，因为消耗严重，内部数组不采用defineProperty
@@ -44,18 +44,20 @@
         // vm.name[0].age
         // vm.arr.push({name:'zsf'})
 
+        // setTimeout(()=>{
+        //     vm.name = 'hello'
+        //     vm.name = '111'
+        //     vm.name = '222'
+        //
+        //     vm.$nextTick(()=>{
+        //         console.log('updated vm.$el',vm.$el)
+        //     })
+        //     // vm._update(vm._render())         // 重新调用render方法产生虚拟dom， 目前还没有diff
+        // },1000)
+
         setTimeout(()=>{
-            vm.name = 'hello'
-            vm.name = '111'
-            vm.name = '222'
-
-            vm.$nextTick(()=>{
-                console.log('updated vm.$el',vm.$el)
-            })
-            // vm._update(vm._render())         // 重新调用render方法产生虚拟dom， 目前还没有diff
+            vm.arr.push(345)
         },1000)
-
-
     </script>
 </body>
 
