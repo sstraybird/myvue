@@ -10,41 +10,65 @@
 
 
 <body>
-<div id="app">{{name}}</div>
+<div id="app">{{fullName}}</div>
 <script src="dist/vue.js"></script>
 <script>
     const vm = new Vue({ // watcher 渲染watcher
         el: '#app',
         data: {
             name: 'zhg',
-
+            age: 100,
+            firstName: 'zhu',
+            lastName: 'feng'
         },
-
-        watch: { // 用户watcher
-            // name(newVal, oldVal) {
-            //     console.log(newVal, oldVal)
-            // },
-            name: [
-                function(newVal, oldVal) {
-                    console.log('------------newValue,oldValue:',newVal, oldVal)
+        computed: { // Object.defineProperty => getter
+            fullName: {
+                get() {
+                    console.log('oooo')
+                    return this.firstName + this.lastName
                 },
-                function(a, b) {
-                    console.log('--------a,b',a, b)
+                set(newValue) {
+                    console.log(newValue);
                 }
-            ],
-            // 'age.n'(newVal, oldVal) {
-            //     console.log(newVal, oldVal)
-            // },
-        }
+            }
+            // fullName(){
+            //     console.log('oooo')
+            //     return this.firstName + this.lastName
+            // }
+        },
+        // watch: { // 用户watcher
+        //     // name(newVal, oldVal) {
+        //     //     console.log(newVal, oldVal)
+        //     // },
+        //     name: [
+        //         function(newVal, oldVal) {
+        //             console.log('------------newValue,oldValue:',newVal, oldVal)
+        //         },
+        //         function(a, b) {
+        //             console.log('--------a,b',a, b)
+        //         }
+        //     ],
+        //     // 'age.n'(newVal, oldVal) {
+        //     //     console.log(newVal, oldVal)
+        //     // },
+        // }
     });
+    setTimeout(()=>{
+        vm.firstName = 'aaa'
+    },1000)
+    // vm.$watch('name', function(newVal) {
+    //     console.log('newValue-----------:',newVal)
+    // })
+    //
+    // setTimeout(() => {
+    //     vm.name = 'zxx'
+    // }, 1000);
 
-    vm.$watch('name', function(newVal) {
-        console.log('newValue-----------:',newVal)
-    })
+    // 计算属性默认不执行 =》 Object.defineProperty => getter
+    // 多次取值如果依赖的值不变化 就不会重新执行  vm.fullname vm.fullname
+    // 依赖的值变化 需要重新执行 vm.firstame = 'zhang'  fullname zhangfeng
 
-    setTimeout(() => {
-        vm.name = 'zxx'
-    }, 1000);
+    // dirty 表示这个值是不是脏的 默认是true （取值后值变为false）， 依赖的值变化了 dirty=>true
 </script>
 
 </body>

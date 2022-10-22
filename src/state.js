@@ -21,9 +21,9 @@ export function initState(vm) { // 状态的初始化
     if (opts.data) {
         initData(vm);
     }
-    // if(opts.computed){
-    //     initComputed();
-    // }
+    if(opts.computed){
+        initComputed(vm, opts.computed);
+    }
     if(opts.watch){     // 初始化watch
         initWatch(vm, opts.watch)
     }
@@ -72,3 +72,31 @@ function createWatcher(vm, key, handler) {
     return vm.$watch(key, handler)
 }
 
+function initComputed(vm, computed) {
+
+    const watchers = vm._computedWatchers = {}
+    for (let key in computed) {
+        // 校验
+        const userDef = computed[key];
+        // 依赖的属性变化就重新取值 get
+        let getter = typeof userDef == 'function' ? userDef : userDef.get;
+
+        // 每个就算属性本质就是watcher
+        // 将watcher和 属性 做一个映射
+        watchers[key] = new Watcher(vm, getter, () => {}, { lazy: true }); // 默认不执行
+
+        // 将key 定义在vm上
+        defineComputed(vm, key, userDef);
+    }
+}
+
+function defineComputed(vm, key, userDef) {
+    let sharedProperty = {};
+    if (typeof userDef == 'function') {
+        sharedProperty.get = userDef;
+    } else {
+        sharedProperty.get = userDef.get
+        sharedProperty.set = userDef.set ;
+    }
+    Object.defineProperty(vm, key, sharedProperty); // computed就是一个defineProperty
+}

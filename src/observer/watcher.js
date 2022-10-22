@@ -8,6 +8,7 @@ class Watcher {
         this.vm = vm;
         this.exprOrFn = exprOrFn;
         this.user = !!options.user; // 转成bool类型     是不是用户watcher
+        this.lazy = !!options.lazy;
         this.cb = cb;
         this.options = options;
         this.id = id++;     //有很多watcher，每个watcher有一个唯一的id
@@ -31,7 +32,7 @@ class Watcher {
         this.deps = [];
         this.depsId = new Set();
         // 第一次的value
-        this.value = this.get(); // 默认初始化 要取值
+        this.value = this.lazy ? undefined : this.get(); // 默认初始化 要取值
     }
     get(){ // 稍后用户更新 时 可以重新调用getter方法
         // defineProperty.get, 每个属性都可以收集自己的watcher
