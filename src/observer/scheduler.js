@@ -23,7 +23,7 @@ export function queueWatcher(watcher) { // 当前执行栈中代码执行完毕�
         has[id] = true;
         // 开启一次更新操作  批处理 （防抖）
         if(!pending){
-            setTimeout(flushSchedulerQueue,0)
+            nextTick(flushSchedulerQueue)
             pending = true;
         }
     }

@@ -1,5 +1,6 @@
 import {patch} from "./vdom/patch";
 import Watcher from "./observer/watcher";
+import {nextTick} from "./utils";
 
 export function lifecycleMixin(Vue) {
     Vue.prototype._update = function(vnode) {
@@ -9,6 +10,7 @@ export function lifecycleMixin(Vue) {
 
         vm.$el = patch(vm.$el, vnode);       //比较前后虚拟节点的差异,将虚拟节点创建成真实节点之后 替换掉div
     }
+    Vue.prototype.$nextTick = nextTick
 }
 // 后续每个组件渲染的时候都会有一个watcher
 export function mountComponent(vm,el) {
