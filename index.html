@@ -7,63 +7,46 @@
     <title>Document</title>
 </head>
 
+
+
 <body>
-<!-- 'hello' + arr + 'world' -->
-<div id="app" a=1 style="color: red;background: blue">
-    hello {{arr}} world
-</div>
+<div id="app">{{name}}</div>
+<script src="dist/vue.js"></script>
+<script>
+    const vm = new Vue({ // watcher 渲染watcher
+        el: '#app',
+        data: {
+            name: 'zhg',
 
-    <script src="dist/vue.js"></script>
+        },
 
-    <script>
-        let vm = new Vue({
-            el:'#app',
-            // data:{
-            //   name: 'zhg'
-            // }
-            data() {
-                //this = vm
-                return {
-                   arr:[[1,2,3]],
-                    age:19
+        watch: { // 用户watcher
+            // name(newVal, oldVal) {
+            //     console.log(newVal, oldVal)
+            // },
+            name: [
+                function(newVal, oldVal) {
+                    console.log('------------newValue,oldValue:',newVal, oldVal)
+                },
+                function(a, b) {
+                    console.log('--------a,b',a, b)
                 }
-            }
-        });
-        // vm._data.a = {c:1}
-        // console.log("vm",vm)
-        // console.log("vm.$options",vm.$options)        //代表用户里面的所有选项
-        // // vm.name == vm._data.name
-        // console.log(vm.name)
-        // 数组没有监控 索引的变化 , 但是索引对应的内容是对象类型，需要被监控 （Object.freeze用户优化性能)
+            ],
+            // 'age.n'(newVal, oldVal) {
+            //     console.log(newVal, oldVal)
+            // },
+        }
+    });
 
-        // 用户很少通过索引操作数组 arr[82] = 1000 内部就想到不对索引进行拦截，因为消耗严重，内部数组不采用defineProperty
+    vm.$watch('name', function(newVal) {
+        console.log('newValue-----------:',newVal)
+    })
 
-        // push shift pop unshift reverse sort splice   7个方法都是变异方法，就是会更改原数组
-        // vm.name.push('123')
+    setTimeout(() => {
+        vm.name = 'zxx'
+    }, 1000);
+</script>
 
-        // vm.name[0].age
-        // vm.arr.push({name:'zsf'})
-
-        // setTimeout(()=>{
-        //     vm.name = 'hello'
-        //     vm.name = '111'
-        //     vm.name = '222'
-        //
-        //     vm.$nextTick(()=>{
-        //         console.log('updated vm.$el',vm.$el)
-        //     })
-        //     // vm._update(vm._render())         // 重新调用render方法产生虚拟dom， 目前还没有diff
-        // },1000)
-
-        setTimeout(()=>{
-            vm.arr[0].push(345)
-        },5000)
-    </script>
 </body>
 
 </html>
-
-
-<!-- Vue中嵌套层次不能太深 ，否则会有大量递归 -->
-<!-- Vue中对象通过的是defineProprety实现的响应式，拦截了get和set 。 如果不存在的属性不会拦截，也不会响应。 可以使用$set = 让对象自己去notify , 或者赋予一个新对象 -->
-<!-- Vue中的数组改索引和长度 是不会影响更新的. 通过变异方法可以更新视图 7个方法， 数组中如果是对象类型，修改对象也可以更新视图 -->

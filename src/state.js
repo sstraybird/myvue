@@ -1,5 +1,15 @@
 import {isFunction} from "./utils";
-import { observe } from "./observer/index"; // node_resolve_plugin
+import { observe } from "./observer/index";
+import Watcher from "./observer/watcher"; // node_resolve_plugin
+
+export function stateMixin(Vue) {
+    Vue.prototype.$watch = function(key, handler, options = {}) {
+        options.user = true; // 是一个用户自己写的watcher
+
+        // vm,name,用户回调，options.user
+        new Watcher(this, key, handler, options);
+    }
+}
 
 export function initState(vm) { // 状态的初始化
     const opts = vm.$options;
@@ -10,9 +20,9 @@ export function initState(vm) { // 状态的初始化
     // if(opts.computed){
     //     initComputed();
     // }
-    // if(opts.watch){
-    //     initWatch();
-    // }
+    if(opts.watch){     // 初始化watch
+        initWatch(vm, opts.watch)
+    }
 }
 
 function proxy(vm,source,key){
@@ -39,3 +49,22 @@ function initData(vm) { //
     }
     observe(data);
 }
+
+function initWatch(vm, watch) { // Object.keys
+    for (let key in watch) {
+        let handler = watch[key];
+
+        if (Array.isArray(handler)) {
+            for (let i = 0; i < handler.length; i++) {
+                createWatcher(vm, key, handler[i])
+            }
+        } else {
+            createWatcher(vm, key, handler)
+        }
+
+    }
+}
+function createWatcher(vm, key, handler) {
+    return vm.$watch(key, handler)
+}
+
