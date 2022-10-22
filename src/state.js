@@ -7,7 +7,11 @@ export function stateMixin(Vue) {
         options.user = true; // 是一个用户自己写的watcher
 
         // vm,name,用户回调，options.user
-        new Watcher(this, key, handler, options);
+        let watcher = new Watcher(this, key, handler, options);
+
+        if(options.immediate){
+            handler(watcher.value)
+        }
     }
 }
 
