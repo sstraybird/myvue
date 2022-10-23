@@ -89,13 +89,27 @@ function initComputed(vm, computed) {
         defineComputed(vm, key, userDef);
     }
 }
+function createComputedGetter(key) {
 
+    return function computedGetter() { // 取计算属性的值 走的是这个函数
+        // this._computedWatchers 包含着所有的计算属性
+        // 通过key 可以拿到对应watcher，这个watcher中包含了getter
+        let watcher = this._computedWatchers[key]
+        // 脏就是 要调用用户的getter  不脏就是不要调用getter
+        console.log('dirty------->',watcher.dirty)
+        if(watcher.dirty){ // 根据dirty属性 来判断是否需要重新求职
+            watcher.evaluate();// this.get()
+        }
+
+        return watcher.value
+    }
+}
 function defineComputed(vm, key, userDef) {
     let sharedProperty = {};
     if (typeof userDef == 'function') {
         sharedProperty.get = userDef;
     } else {
-        sharedProperty.get = userDef.get
+        sharedProperty.get = createComputedGetter(key)
         sharedProperty.set = userDef.set ;
     }
     Object.defineProperty(vm, key, sharedProperty); // computed就是一个defineProperty

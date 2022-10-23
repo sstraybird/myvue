@@ -9,6 +9,7 @@ class Watcher {
         this.exprOrFn = exprOrFn;
         this.user = !!options.user; // 转成bool类型     是不是用户watcher
         this.lazy = !!options.lazy;
+        this.dirty = options.lazy; // 如果是计算属性，那么默认值lazy:true, dirty:true
         this.cb = cb;
         this.options = options;
         this.id = id++;     //有很多watcher，每个watcher有一个唯一的id
@@ -38,7 +39,7 @@ class Watcher {
         // defineProperty.get, 每个属性都可以收集自己的watcher
         // 我希望一个属性可以对应多个watcher，同时一个watcher可以对应多个属性
         pushTarget(this); // Dep.target = watcher
-        const value = this.getter(); // render() 方法会去vm上取值 vm._update(vm._render)
+        const value = this.getter.call(this.vm); // render() 方法会去vm上取值 vm._update(vm._render)
         popTarget(); // Dep.target = null; 如果Dep.target有值说明这个变量在模板中使用了
 
         return value;
@@ -62,6 +63,10 @@ class Watcher {
             this.deps.push(dep);
             dep.addSub(this)
         }
+    }
+    evaluate(){
+        this.dirty = false; // 为false表示取过值了
+        this.value = this.get(); // 用户的getter执行
     }
 }
 
