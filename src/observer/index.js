@@ -56,6 +56,7 @@ function defineReactive(data,key,value){ // value有可能是对象
     console.log('childObj',childOb)        // 获取到了数组对应ob
     Object.defineProperty(data,key,{
         get(){
+            console.log('---------depdep',dep,key)
             console.log('get',data,key)
             // 取值时我希望将watcher和dep 对应起来
             if(Dep.target){ // 此值是在模板中取值的

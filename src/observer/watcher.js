@@ -46,7 +46,11 @@ class Watcher {
     }
     update(){ // vue中的更新操作是异步的
         // 每次更新时 this
-        queueWatcher(this); // 多次调用update 我希望先将watcher缓存下来，等一会一起更新
+        if(this.lazy){
+            this.dirty = true;
+        }else{
+            queueWatcher(this); // 多次调用update 我希望先将watcher缓存下来，等一会一起更新
+        }
     }
     run(){ // 后续要有其他功能
         let newValue = this.get();
