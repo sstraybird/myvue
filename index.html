@@ -7,7 +7,12 @@
     <title>Document</title>
 </head>
 
+<!-- 当在页面中直接写fullname时 fullname不会去收集渲染watcher ， 因为fullname没有dep 没有收集的功能 -->
+<!-- firstName 是在计算属性中使用的 ，所以他会收集计算属性watcher。 没有收集渲染watcher -->
 
+<!-- 计算属性中的值应该记录 计算属性watcher 和渲染watcher -->
+
+<!-- Dep.target上赋值一个渲染watcher ， 又将Dep.target设置为计算属性watcher-->
 
 <body>
 <div id="app">{{fullName}}</div>

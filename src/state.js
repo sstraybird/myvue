@@ -1,6 +1,7 @@
 import {isFunction} from "./utils";
 import { observe } from "./observer/index";
-import Watcher from "./observer/watcher"; // node_resolve_plugin
+import Watcher from "./observer/watcher";
+import Dep from "./observer/dep"; // node_resolve_plugin
 
 export function stateMixin(Vue) {
     Vue.prototype.$watch = function(key, handler, options = {}) {
@@ -83,8 +84,7 @@ function initComputed(vm, computed) {
 
         // 每个就算属性本质就是watcher
         // 将watcher和 属性 做一个映射
-        watchers[key] = new Watcher(vm, getter, () => {}, { lazy: true }); // 默认不执行
-
+        watchers[key] = new Watcher(vm, getter, () => {}, { lazy: true }); // 计算watcher 默认不执行
         // 将key 定义在vm上
         defineComputed(vm, key, userDef);
     }
@@ -100,7 +100,11 @@ function createComputedGetter(key) {
         if(watcher.dirty){ // 根据dirty属性 来判断是否需要重新求职
             watcher.evaluate();// this.get()
         }
-
+        // 如果当前取完值后 Dep.target还有值  需要继续向上收集
+        if(Dep.target){
+            // 计算属性watcher 内部 有两个dep  firstName,lastName
+            watcher.depend(); // watcher 里 对应了 多个dep
+        }
         return watcher.value
     }
 }

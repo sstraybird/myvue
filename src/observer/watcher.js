@@ -72,6 +72,12 @@ class Watcher {
         this.dirty = false; // 为false表示取过值了
         this.value = this.get(); // 用户的getter执行
     }
+    depend(){
+        let i = this.deps.length;
+        while(i--){
+            this.deps[i].depend(); //lastName,firstName 收集渲染watcher
+        }
+    }
 }
 
 // watcher 和 dep
