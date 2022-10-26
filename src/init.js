@@ -7,9 +7,10 @@ import {mergeOptions} from "./utils";
 
 export function initMixin(Vue) {        //这里的Vue是VUe构造函数
     Vue.prototype._init = function(options) {
-        console.log(options);
+        console.log('init options',options);
         const vm = this     //this 都是指原型的实例 就是在index.html new出的vm   这里赋值给vm方便阅读 var that = this;
         // vm.$options = options    // 后面会对options进行扩展操作
+        console.log("vm.constructor.options",vm.constructor.options)
         vm.$options = mergeOptions(vm.constructor.options, options); // 后面会对options进行扩展操作
         console.log('vm.$options',vm.$options)
 
