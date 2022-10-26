@@ -2,7 +2,7 @@
 
 import {initState} from "./state";
 import {compileToFunction} from "./compiler/index";
-import {mountComponent} from "./lifecycle";
+import {callHook, mountComponent} from "./lifecycle";
 import {mergeOptions} from "./utils";
 
 export function initMixin(Vue) {        //这里的Vue是VUe构造函数
@@ -12,8 +12,11 @@ export function initMixin(Vue) {        //这里的Vue是VUe构造函数
         // vm.$options = options    // 后面会对options进行扩展操作
         vm.$options = mergeOptions(vm.constructor.options, options); // 后面会对options进行扩展操作
         console.log('vm.$options',vm.$options)
+
+        callHook(vm, 'beforeCreate');
         // 对数据进行初始化 watch computed props data ...
         initState(vm); // vm.$options.data  数据劫持
+        callHook(vm, 'created');
 
         if(vm.$options.el){
             // 将数据挂载到这个模板上

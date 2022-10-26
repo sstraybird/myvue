@@ -25,18 +25,24 @@
 
     Vue.mixin({
         beforeCreate(){
-            console.log('before create1')
+            console.log("hook",'before create1')
         }
     })
     Vue.mixin({
         beforeCreate(){
-            console.log('before create2')
+            console.log("hook",'before create2')
         }
     })
     const vm = new Vue({ // vm.$options.beforeCreate:[fn1,fn2,fn3]
         el: '#app',
         beforeCreate(){
-            console.log('before create3')
+            console.log("hook",'before create3')
+        },
+        created(){
+            console.log("hook",'created')
+        },
+        beforeMount(){
+            console.log("hook","beforeMount")
         }
     });
 </script>
