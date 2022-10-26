@@ -15,7 +15,7 @@
 <!-- Dep.target上赋值一个渲染watcher ， 又将Dep.target设置为计算属性watcher-->
 
 <body>
-<div id="app"></div>
+<div id="app"><my-button></my-button></div>
 <script src="dist/vue.js"></script>
 <!--<script src="https://cdn.jsdelivr.net/npm/vue@2.7.13/dist/vue.js"></script>-->
 <script>
@@ -23,26 +23,55 @@
 
     // Vue.options = {beforeCreate:[fn1,fn2]}
 
-    Vue.mixin({
-        beforeCreate(){
-            console.log("hook",'before create1')
-        }
-    })
-    Vue.mixin({
-        beforeCreate(){
-            console.log("hook",'before create2')
-        }
-    })
-    const vm = new Vue({ // vm.$options.beforeCreate:[fn1,fn2,fn3]
+    // Vue.mixin({
+    //     beforeCreate(){
+    //         console.log("hook",'before create1')
+    //     }
+    // })
+    // Vue.mixin({
+    //     beforeCreate(){
+    //         console.log("hook",'before create2')
+    //     }
+    // })
+    // const vm = new Vue({ // vm.$options.beforeCreate:[fn1,fn2,fn3]
+    //     el: '#app',
+    //     beforeCreate(){
+    //         console.log("hook",'before create3')
+    //     },
+    //     created(){
+    //         console.log("hook",'created')
+    //     },
+    //     beforeMount(){
+    //         console.log("hook","beforeMount")
+    //     }
+    // });
+
+
+    Vue.component("my-button", { // Vue.options.components = {"my-button":fn}
+        template: '<button>hello</button>'
+    });
+
+    const vm = new Vue({ // .__proto__
         el: '#app',
-        beforeCreate(){
-            console.log("hook",'before create3')
+        data:{
+            arr:1
         },
-        created(){
-            console.log("hook",'created')
+        beforeCreate() {
+            console.log('beforeCreate', 'parent')
         },
-        beforeMount(){
-            console.log("hook","beforeMount")
+        mounted() {
+            console.log('mounted', 'parent')
+        },
+        components: {
+            "my-button": {
+                template: '<button>world</button>',
+                beforeCreate() {
+                    console.log('beforeCreate', 'child');
+                },
+                mounted() {
+                    console.log('mounted', 'child')
+                },
+            }
         }
     });
 </script>
