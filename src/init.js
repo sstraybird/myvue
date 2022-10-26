@@ -37,9 +37,11 @@ export function initMixin(Vue) {        //这里的Vue是VUe构造函数
             if(!template && el){ // 用户也没有传递template 就取el的内容作为模板
                 template = el.outerHTML;
                 console.log('template',template)
-                let render = compileToFunction(template);
-                options.render = render;
+                // let render = compileToFunction(template);
+                // options.render = render;
             }
+            let render = compileToFunction(template);
+            options.render = render;
         }
         // options.render 就是渲染函数
         console.log('init render function',options.render)

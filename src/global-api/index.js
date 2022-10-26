@@ -29,8 +29,8 @@ export function initGlobalApi(Vue) {
     Vue.extend = function (opts) { // extend方法就是产生一个继承于Vue的类
         // 并且身上应该有父类的所有功能
         const Super = this
-        const Sub = function VueComponent(){
-            this._init();        //将子组件变成render函数
+        const Sub = function VueComponent(options){
+            this._init(options);        //将子组件变成render函数
         }
         // 原型继承
         Sub.prototype = Object.create(Super.prototype);
