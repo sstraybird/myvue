@@ -127,3 +127,9 @@ export function mergeOptions(parent, child) {
     }
     return options
 }
+
+export function isReservedTag(str) {
+    let reservedTag = 'a,div,span,p,img,button,ul,li';
+    // 源码根据 “，” 生成映射表 {a:true,div:true,p:true}
+    return reservedTag.includes(str);
+}
