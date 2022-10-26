@@ -15,6 +15,13 @@
 <!-- Dep.target上赋值一个渲染watcher ， 又将Dep.target设置为计算属性watcher-->
 
 <body>
+<!--
+      1.给组件创建一个构造函数, 基于Vue
+      2.开始生成虚拟节点， 对组件进行特殊处理 data.hook = { init () {}}
+      3.生成dom元素， 如果当前虚拟节点少有hook.init属性，说明是组建
+      4.对组件进行 new 组件().$mount()  => vm.$el
+      5.将组件的$el 插入到父容器中 (父组件)
+ -->
 <div id="app"><my-button></my-button></div>
 <script src="dist/vue.js"></script>
 <!--<script src="https://cdn.jsdelivr.net/npm/vue@2.7.13/dist/vue.js"></script>-->
