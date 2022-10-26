@@ -2,6 +2,7 @@ import { initMixin } from "./init";
 import {renderMixin} from "./render";
 import {lifecycleMixin} from "./lifecycle";
 import {stateMixin} from "./state";
+import {initGlobalApi} from "./global-api/index.js";
 
 function Vue(options) {     //构造函数模拟类，类中写prototype比较怪，用function符合习惯
     // options 为用户传入的选项
@@ -15,4 +16,7 @@ initMixin(Vue);     //在原型上添加_init方法， 组件也需要初始化�
 renderMixin(Vue); // _render
 lifecycleMixin(Vue); // _update
 stateMixin(Vue);
+
+// 在类上扩展的 Vue.mixin
+initGlobalApi(Vue);
 export default Vue    //导出的会放到window下
