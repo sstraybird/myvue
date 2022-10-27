@@ -42,7 +42,7 @@ export function patch(oldVnode, vnode) {
             }
 
         } else if (oldChildren.length > 0) { // 老的有儿子 新的没儿子
-
+            el.innerHTML = ``; // 直接删除老节点
         }
     }
 }
