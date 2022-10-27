@@ -21,6 +21,24 @@ export function patch(oldVnode, vnode) {
             // 可以通过vnode.el属性。获取现在真实的dom元素
             return oldVnode.el.parentNode.replaceChild(createElm(vnode), oldVnode.el);
         }
+
+        // 如果两个虚拟节点是文本节点  比较文本内容 ... todo
+
+        // 如果标签一样比较属性
+    }
+}
+function patchProps(vnode, oldProps = {}) { // 初次渲染时可以调用此方法，后续更新也可以调用此方法
+    let newProps = vnode.data || {};
+    let el = vnode.el;
+    // 直接用新的生成到元素上
+    for (let key in newProps) {
+        if (key === 'style') {
+            for (let styleName in newProps.style) {
+                el.style[styleName] = newProps.style[styleName];
+            }
+        } else {
+            el.setAttribute(key, newProps[key]);
+        }
     }
 }
 
@@ -46,6 +64,7 @@ export function createElm(vnode) {
         }
 
         vnode.el = document.createElement(tag); // 虚拟节点会有一个el属性 对应真实节点
+        patchProps(vnode);
         children.forEach(child => {
             vnode.el.appendChild(createElm(child))
         });
