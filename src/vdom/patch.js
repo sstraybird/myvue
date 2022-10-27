@@ -24,12 +24,29 @@ export function patch(oldVnode, vnode) {
 
         // 如果两个虚拟节点是文本节点  比较文本内容 ... todo
 
-        // 如果标签一样比较属性
+        // 如果标签一样比较属性, 传入新的新的虚拟节点 ，和老的属性 。用新的属性 更新老的
+        let el = vnode.el = oldVnode.el; // 表示当前新节点 复用老节点
+        patchProps(vnode, oldVnode.data)
     }
 }
 function patchProps(vnode, oldProps = {}) { // 初次渲染时可以调用此方法，后续更新也可以调用此方法
     let newProps = vnode.data || {};
     let el = vnode.el;
+
+    // 如果老的属性有，新的没有直接删除
+    let newStyle = newProps.style || {};
+    let oldStyle = oldProps.style || {};
+    for (let key in oldStyle) {
+        if (!newStyle[key]) { // 新的里面不存在这个样式
+            el.style[key] = '';
+        }
+    }
+    for (let key in oldProps) {
+        if (!newProps[key]) {
+            el.removeAttribute(key);
+        }
+    }
+
     // 直接用新的生成到元素上
     for (let key in newProps) {
         if (key === 'style') {
