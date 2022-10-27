@@ -27,6 +27,23 @@ export function patch(oldVnode, vnode) {
         // 如果标签一样比较属性, 传入新的新的虚拟节点 ，和老的属性 。用新的属性 更新老的
         let el = vnode.el = oldVnode.el; // 表示当前新节点 复用老节点
         patchProps(vnode, oldVnode.data)
+        // 属性可能有删除的情况
+
+        // 一方有儿子 ， 一方没儿子
+        let oldChildren = oldVnode.children || [];
+        let newChildren = vnode.children || [];
+
+        if (oldChildren.length > 0 && newChildren.length > 0) {
+            // 双方都有儿子
+        } else if (newChildren.length > 0) { // 老的没儿子 但是新的有儿子
+            for (let i = 0; i < newChildren.length; i++) {
+                let child = createElm(newChildren[i]);
+                el.appendChild(child); // 循环创建新节点
+            }
+
+        } else if (oldChildren.length > 0) { // 老的有儿子 新的没儿子
+
+        }
     }
 }
 function patchProps(vnode, oldProps = {}) { // 初次渲染时可以调用此方法，后续更新也可以调用此方法
