@@ -15,6 +15,12 @@ export function patch(oldVnode, vnode) {
         parentElm.removeChild(oldVnode);
 
         return elm
+    }else{
+        // 如果标签名称不一样 直接删掉老的换成新的即可
+        if (oldVnode.tag !== vnode.tag) {
+            // 可以通过vnode.el属性。获取现在真实的dom元素
+            return oldVnode.el.parentNode.replaceChild(createElm(vnode), oldVnode.el);
+        }
     }
 }
 
@@ -31,7 +37,7 @@ function createComponent(vnode) {
 
 }
 
-function createElm(vnode) {
+export function createElm(vnode) {
     let { tag, data, children, text, vm } = vnode
     if (typeof tag === 'string') { // 元素
         if (createComponent(vnode)) {
