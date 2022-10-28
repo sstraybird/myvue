@@ -81,6 +81,13 @@ function patchChildren(el, oldChildren, newChildren) {
             oldEndVnode = oldChildren[--oldEndIndex];
             newEndVnode = newChildren[--newEndIndex];
         }
+        // 头尾比较  =》 reverse
+        else if(isSameVnode(oldStartVnode,newEndVnode)){
+            patch(oldStartVnode,newEndVnode);
+            el.insertBefore(oldStartVnode.el,oldEndVnode.el.nextSibling); // 移动老的元素，老的元素就被移动走了，不用删除
+            oldStartVnode = oldChildren[++oldStartIndex];
+            newEndVnode = newChildren[--newEndIndex];
+        }
     }
 
 
@@ -100,7 +107,7 @@ function patchChildren(el, oldChildren, newChildren) {
         for (let i = oldStartIndex; i <= oldEndIndex; i++) {
             el.removeChild(oldChildren[i].el);
         }
-    } 
+    }
 }
 function patchProps(vnode, oldProps = {}) { // 初次渲染时可以调用此方法，后续更新也可以调用此方法
     let newProps = vnode.data || {};
