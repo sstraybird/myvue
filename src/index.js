@@ -39,9 +39,11 @@ document.body.appendChild(createElm(oldVnode))
 // v-if   v-else
 let newTemplate = `<div style="color: blue" b="2">
     <li key="D">D</li>
-    <li key="C">C</li>
-    <li key="B">B</li>
     <li key="A">A</li>
+    <li key="B">B</li>
+    <li key="C">C</li>
+
+
 </div>`
 let vm2 = new Vue({data:{message:'zf'}})
 const render2 = compileToFunction(newTemplate)

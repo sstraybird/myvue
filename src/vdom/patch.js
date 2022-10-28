@@ -89,6 +89,13 @@ function patchChildren(el, oldChildren, newChildren) {
             oldStartVnode = oldChildren[++oldStartIndex];
             newEndVnode = newChildren[--newEndIndex];
         }
+        else if(isSameVnode(oldEndVnode,newStartVnode)){ // 尾头比较
+            console.log("tail vs head ")
+            patch(oldEndVnode,newStartVnode);
+            el.insertBefore(oldEndVnode.el,oldStartVnode.el);
+            oldEndVnode = oldChildren[--oldEndIndex];
+            newStartVnode = newChildren[++newStartIndex];
+        }
     }
 
 
