@@ -21,11 +21,15 @@ export function patch(oldVnode, vnode) {
             // 可以通过vnode.el属性。获取现在真实的dom元素
             return oldVnode.el.parentNode.replaceChild(createElm(vnode), oldVnode.el);
         }
-
-        // 如果两个虚拟节点是文本节点  比较文本内容 ... todo
-
-        // 如果标签一样比较属性, 传入新的新的虚拟节点 ，和老的属性 。用新的属性 更新老的
         let el = vnode.el = oldVnode.el; // 表示当前新节点 复用老节点
+        // 如果两个虚拟节点是文本节点  比较文本内容 ... todo
+        if (vnode.tag == undefined) { // 新老都是文本
+            if (oldVnode.text !== vnode.text) {
+                el.textContent = vnode.text;
+            }
+            return;
+        }
+        // 如果标签一样比较属性, 传入新的新的虚拟节点 ，和老的属性 。用新的属性 更新老的
         patchProps(vnode, oldVnode.data)
         // 属性可能有删除的情况
 
@@ -35,6 +39,9 @@ export function patch(oldVnode, vnode) {
 
         if (oldChildren.length > 0 && newChildren.length > 0) {
             // 双方都有儿子
+
+            //  vue用了双指针的方式 来比对
+            patchChildren(el, oldChildren, newChildren);
         } else if (newChildren.length > 0) { // 老的没儿子 但是新的有儿子
             for (let i = 0; i < newChildren.length; i++) {
                 let child = createElm(newChildren[i]);
@@ -43,6 +50,32 @@ export function patch(oldVnode, vnode) {
 
         } else if (oldChildren.length > 0) { // 老的有儿子 新的没儿子
             el.innerHTML = ``; // 直接删除老节点
+        }
+        // vue的特点是每个组件都有一个watcher，当前组件中数据变化 只需要更新当前组件
+    }
+}
+
+function isSameVnode(oldVnode, newVnode) {
+    return (oldVnode.tag == newVnode.tag) && (oldVnode.key == newVnode.key);
+}
+
+
+function patchChildren(el, oldChildren, newChildren) {
+    let oldStartIndex = 0;
+    let oldStartVnode = oldChildren[0];
+    let oldEndIndex = oldChildren.length - 1;
+    let oldEndVnode = oldChildren[oldEndIndex];
+    let newStartIndex = 0;
+    let newStartVnode = newChildren[0];
+    let newEndIndex = newChildren.length - 1;
+    let newEndVnode = newChildren[newEndIndex];
+
+    while (oldStartIndex <= oldEndIndex && newStartIndex <= newEndIndex) {
+        // 同时循环新的节点和 老的节点，有一方循环完毕就结束了
+        if (isSameVnode(oldStartVnode, newStartVnode)) { // 头头比较，发现标签一致，
+            patch(oldStartVnode, newStartVnode);
+            oldStartVnode = oldChildren[++oldStartIndex];
+            newStartVnode = newChildren[++newStartIndex];
         }
     }
 }

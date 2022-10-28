@@ -24,7 +24,12 @@ initGlobalApi(Vue);
 import { compileToFunction } from './compiler/index.js';
 import { createElm, patch } from './vdom/patch.js'
 // diff 核心
-let oldTemplate = `<div style="color: red;background: blue" a="1">{{message}}</div>`          // 在最外层创建了一个根节点 vue3可以
+let oldTemplate = `<div style="color: red;background: blue" a="1">
+    <li>A</li>
+    <li>B</li>
+    <li>C</li>
+    <li>D</li>
+</div>`          // 在最外层创建了一个根节点 vue3可以
 let vm1 = new Vue({data:{message:'hello world'}})
 const render1 = compileToFunction(oldTemplate)
 const oldVnode = render1.call(vm1)
@@ -32,7 +37,12 @@ console.log('oldVnode',oldVnode)
 document.body.appendChild(createElm(oldVnode))
 
 // v-if   v-else
-let newTemplate = `<div style="color: blue" b="2"></div>`
+let newTemplate = `<div style="color: blue" b="2">
+    <li>A</li>
+    <li>D</li>
+    <li>C</li>
+    <li>D</li>
+</div>`
 let vm2 = new Vue({data:{message:'zf'}})
 const render2 = compileToFunction(newTemplate)
 const newVnode = render2.call(vm2)
