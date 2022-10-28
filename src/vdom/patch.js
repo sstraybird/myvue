@@ -83,6 +83,7 @@ function patchChildren(el, oldChildren, newChildren) {
         }
         // 头尾比较  =》 reverse
         else if(isSameVnode(oldStartVnode,newEndVnode)){
+            console.log("-------------reverse-----------")
             patch(oldStartVnode,newEndVnode);
             el.insertBefore(oldStartVnode.el,oldEndVnode.el.nextSibling); // 移动老的元素，老的元素就被移动走了，不用删除
             oldStartVnode = oldChildren[++oldStartIndex];
