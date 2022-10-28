@@ -78,6 +78,15 @@ function patchChildren(el, oldChildren, newChildren) {
             newStartVnode = newChildren[++newStartIndex];
         }
     }
+
+    // 如果用户追加了一个怎么办？
+
+    // 这里是没有比对完的
+    if (newStartIndex <= newEndIndex) {
+        for (let i = newStartIndex; i <= newEndIndex; i++) {
+            el.appendChild(createElm(newChildren[i]))
+        }
+    }
 }
 function patchProps(vnode, oldProps = {}) { // 初次渲染时可以调用此方法，后续更新也可以调用此方法
     let newProps = vnode.data || {};
