@@ -95,6 +95,12 @@ function patchChildren(el, oldChildren, newChildren) {
             el.insertBefore(createElm(newChildren[i]),anchor);
         }
     }
+
+    if(oldStartIndex <= oldEndIndex){
+        for (let i = oldStartIndex; i <= oldEndIndex; i++) {
+            el.removeChild(oldChildren[i].el);
+        }
+    } 
 }
 function patchProps(vnode, oldProps = {}) { // 初次渲染时可以调用此方法，后续更新也可以调用此方法
     let newProps = vnode.data || {};
