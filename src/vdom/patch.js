@@ -76,15 +76,23 @@ function patchChildren(el, oldChildren, newChildren) {
             patch(oldStartVnode, newStartVnode);
             oldStartVnode = oldChildren[++oldStartIndex];
             newStartVnode = newChildren[++newStartIndex];
+        }else if(isSameVnode(oldEndVnode,newEndVnode)){ // 从尾部开始比较
+            patch(oldEndVnode,newEndVnode);
+            oldEndVnode = oldChildren[--oldEndIndex];
+            newEndVnode = newChildren[--newEndIndex];
         }
     }
 
-    // 如果用户追加了一个怎么办？
 
     // 这里是没有比对完的
     if (newStartIndex <= newEndIndex) {
         for (let i = newStartIndex; i <= newEndIndex; i++) {
-            el.appendChild(createElm(newChildren[i]))
+            // el.appendChild(createElm(newChildren[i]))
+            // insertBefore方法 他可以appendChild功能 insertBefore(节点,null)  dom api
+
+            //  看一下伪指针的下一个元素是否存在
+            let anchor = newChildren[newEndIndex + 1] == null? null :newChildren[newEndIndex + 1].el
+            el.insertBefore(createElm(newChildren[i]),anchor);
         }
     }
 }
