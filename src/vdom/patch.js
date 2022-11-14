@@ -88,7 +88,11 @@ function patchChildren(el, oldChildren, newChildren) {
     while (oldStartIndex <= oldEndIndex && newStartIndex <= newEndIndex) {
         // 头头比较 尾尾比较 头尾比较 尾头比较
         // 优化了 向后添加， 向前添加，尾巴移动到头部，头部移动到尾部 ，反转
-
+        if(!oldStartVnode){ // 已经被移动走了
+            oldStartVnode = oldChildren[++oldStartIndex];
+        }else if(!oldEndVnode){
+            oldEndVnode = oldChildren[--oldEndIndex];
+        }
 
         // 同时循环新的节点和 老的节点，有一方循环完毕就结束了
         if (isSameVnode(oldStartVnode, newStartVnode)) { // 头头比较，发现标签一致，
@@ -115,8 +119,18 @@ function patchChildren(el, oldChildren, newChildren) {
             oldEndVnode = oldChildren[--oldEndIndex];
             newStartVnode = newChildren[++newStartIndex];
         }else {
-            // 乱序比对   核心diff
+            // 乱序比对   核心diff        浏览器会把多次的dom操作变成一次移动到页面中
             // 1.需要根据key和 对应的索引将老的内容生成程映射表
+            let moveIndex = keysMap[newStartVnode.key]; // 用新的去老的中查找
+            if(moveIndex == undefined){ // 如果不能复用直接创建新的插入到老的节点开头处
+                el.insertBefore(createElm(newStartVnode),oldStartVnode.el);
+            }else{
+                let moveNode = oldChildren[moveIndex];
+                oldChildren[moveIndex] = null; // 此节点已经被移动走了
+                el.insertBefore(moveNode.el,oldStartVnode.el);
+                patch(moveNode,newStartVnode); // 比较两个节点的属性
+            }
+            newStartVnode = newChildren[++newStartIndex]
         }
     }
 
@@ -135,7 +149,8 @@ function patchChildren(el, oldChildren, newChildren) {
 
     if(oldStartIndex <= oldEndIndex){
         for (let i = oldStartIndex; i <= oldEndIndex; i++) {
-            el.removeChild(oldChildren[i].el);
+            //  如果老的多 将老节点删除 ， 但是可能里面有null 的情况
+            if (oldChildren[i] !== null) el.removeChild(oldChildren[i].el);
         }
     }
 }
