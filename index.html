@@ -25,8 +25,22 @@
 
 <script src="dist/vue.js"></script>
 <!--<script src="https://cdn.jsdelivr.net/npm/vue@2.7.13/dist/vue.js"></script>-->
+<!-- 循环时尽量不要使用索引作为key，可能会导致无法复用 -->
+<!-- 比较是靠的tag key -->
+<div id="app">
+    <li>{{arr}}</li>
+</div>
+<script src="dist/vue.js"></script>
 <script>
-
+    let vm = new Vue({
+        el:'#app',
+        data:{
+            arr:[1,2,3,4]
+        }
+    })
+    setTimeout(() => {
+        vm.arr.splice(0,1)
+    }, 3000);
 </script>
 
 </body>

@@ -7,8 +7,13 @@ export function lifecycleMixin(Vue) {
         console.log('_update',vnode)
         // 既有初始化 又有更新
         const vm = this;
-
-        vm.$el = patch(vm.$el, vnode);       //比较前后虚拟节点的差异,将虚拟节点创建成真实节点之后 替换掉div
+        const prevVnode = vm._vnode; // 表示将当前的虚拟节点保存起来
+        if(!prevVnode){ // 初次渲染
+            vm.$el = patch(vm.$el, vnode);
+        }else{
+            vm.$el = patch(prevVnode, vnode);       //比较前后虚拟节点的差异,将虚拟节点创建成真实节点之后 替换掉div
+        }
+        vm._vnode = vnode
     }
     Vue.prototype.$nextTick = nextTick
 }
