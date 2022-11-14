@@ -59,7 +59,11 @@ function isSameVnode(oldVnode, newVnode) {
     return (oldVnode.tag == newVnode.tag) && (oldVnode.key == newVnode.key);
 }
 
-
+// dom的生成 ast => render方法 => 虚拟节点 => 真实dom
+// 更新时需要重新创建ast语法树吗？
+// 如果动态的添加了节点 （绕过vue添加的vue监控不到的） 难道不需要重新ast吗？
+// 后续数据变了，只会操作自己管理的dom元素
+// 如果直接操作dom 和 vue无关，不需要重新创建ast语法树
 function patchChildren(el, oldChildren, newChildren) {
     let oldStartIndex = 0;
     let oldStartVnode = oldChildren[0];
@@ -70,7 +74,22 @@ function patchChildren(el, oldChildren, newChildren) {
     let newEndIndex = newChildren.length - 1;
     let newEndVnode = newChildren[newEndIndex];
 
+    const makeIndexByKey = (children)=>{
+        return children.reduce((memo,current,index)=>{
+            if(current.key){
+                memo[current.key] = index;
+            }
+            return memo;
+        },{})
+    }
+
+    const keysMap = makeIndexByKey(oldChildren);
+    console.log('----keysMap',keysMap)
     while (oldStartIndex <= oldEndIndex && newStartIndex <= newEndIndex) {
+        // 头头比较 尾尾比较 头尾比较 尾头比较
+        // 优化了 向后添加， 向前添加，尾巴移动到头部，头部移动到尾部 ，反转
+
+
         // 同时循环新的节点和 老的节点，有一方循环完毕就结束了
         if (isSameVnode(oldStartVnode, newStartVnode)) { // 头头比较，发现标签一致，
             patch(oldStartVnode, newStartVnode);
@@ -95,6 +114,9 @@ function patchChildren(el, oldChildren, newChildren) {
             el.insertBefore(oldEndVnode.el,oldStartVnode.el);
             oldEndVnode = oldChildren[--oldEndIndex];
             newStartVnode = newChildren[++newStartIndex];
+        }else {
+            // 乱序比对   核心diff
+            // 1.需要根据key和 对应的索引将老的内容生成程映射表
         }
     }
 
